@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ATUUNE Demo</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        padding: 40px 16px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        color: #1a1a2e;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .card h2 {
+        font-size: 1rem;
+        color: #444;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+        outline: none;
+        transition: border 0.2s;
+      }
+
+      input:focus {
+        border-color: #4f46e5;
+      }
+
+      button {
+        width: 100%;
+        padding: 11px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button:hover {
+        background: #4338ca;
+      }
+      button:disabled {
+        background: #a5b4fc;
+        cursor: not-allowed;
+      }
+
+      .secondary {
+        background: #f3f4f6;
+        color: #374151;
+        margin-top: 8px;
+      }
+
+      .secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .status {
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        display: none;
+      }
+
+      .status.success {
+        background: #d1fae5;
+        color: #065f46;
+        display: block;
+      }
+      .status.error {
+        background: #fee2e2;
+        color: #991b1b;
+        display: block;
+      }
+      .status.info {
+        background: #e0e7ff;
+        color: #3730a3;
+        display: block;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      pre {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 0.82rem;
+        overflow-x: auto;
+        margin-top: 10px;
+        white-space: pre-wrap;
+      }
+
+      .user-badge {
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .user-badge span {
+        color: #4f46e5;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔥 ATUUNE Demo</h1>
+
+      <!-- AUTH SECTION -->
+      <div id="authSection">
+        <!-- Register -->
+        <div class="card">
+          <h2>Register</h2>
+          <input type="text" id="regName" placeholder="Display name" />
+          <input type="email" id="regEmail" placeholder="Email" />
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Password (min 6 chars)"
+          />
+          <button onclick="register()">Create Account</button>
+          <div id="regStatus" class="status"></div>
+        </div>
+
+        <!-- Login -->
+        <div class="card">
+          <h2>Login</h2>
+          <input type="email" id="loginEmail" placeholder="Email" />
+          <input type="password" id="loginPassword" placeholder="Password" />
+          <button onclick="login()">Login</button>
+          <div id="loginStatus" class="status"></div>
+        </div>
+      </div>
+
+      <!-- DATA SECTION (shown after login) -->
+      <div id="dataSection" class="hidden">
+        <div class="user-badge">Logged in as <span id="userEmail"></span></div>
+
+        <!-- Write -->
+        <div class="card">
+          <h2>Write to Database</h2>
+          <input type="text" id="writeKey" placeholder='Key (e.g. "city")' />
+          <input
+            type="text"
+            id="writeValue"
+            placeholder='Value (e.g. "Lagos")'
+          />
+          <button onclick="writeData()">Write Data</button>
+          <div id="writeStatus" class="status"></div>
+        </div>
+
+        <!-- Read -->
+        <div class="card">
+          <h2>Read from Database</h2>
+          <button onclick="readData()">Read My Data</button>
+          <div id="readStatus" class="status"></div>
+          <pre id="readOutput" class="hidden"></pre>
+        </div>
+
+        <!-- Profile -->
+        <div class="card">
+          <h2>My Profile</h2>
+          <button onclick="getProfile()">Get Profile from Backend</button>
+          <div id="profileStatus" class="status"></div>
+          <pre id="profileOutput" class="hidden"></pre>
+        </div>
+
+        <div class="card">
+          <button class="secondary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase Client SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+      // -------------------------------------------------------
+      // PASTE YOUR FIREBASE CLIENT CONFIG HERE
+      // -------------------------------------------------------
+      const firebaseConfig = {
+        apiKey: "AIzaSyBud-uj42WsJXeq4YlgX_wybEgRZCA5tI8",
+        authDomain: "atuune-demo.firebaseapp.com",
+        databaseURL: "https://atuune-demo-default-rtdb.firebaseio.com",
+        projectId: "atuune-demo",
+        storageBucket: "atuune-demo.firebasestorage.app",
+        messagingSenderId: "723584441780",
+        appId: "1:723584441780:web:544c85509785e59ac7a6e1",
+      };
+      // -------------------------------------------------------
+
+      const BACKEND = "http://18.134.245.122";
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      let idToken = null;
+
+      // Track auth state
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          idToken = await user.getIdToken();
+          document.getElementById("userEmail").textContent = user.email;
+          document.getElementById("authSection").classList.add("hidden");
+          document.getElementById("dataSection").classList.remove("hidden");
+        } else {
+          idToken = null;
+          document.getElementById("authSection").classList.remove("hidden");
+          document.getElementById("dataSection").classList.add("hidden");
+        }
+      });
+
+      function showStatus(id, message, type) {
+        const el = document.getElementById(id);
+        el.textContent = message;
+        el.className = `status ${type}`;
+      }
+
+      // Register
+      window.register = async () => {
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value;
+
+        try {
+          const res = await fetch(`${BACKEND}/api/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, displayName: name }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          showStatus(
+            "regStatus",
+            `Account created! Now log in below.`,
+            "success",
+          );
+        } catch (err) {
+          showStatus("regStatus", err.message, "error");
+        }
+      };
+
+      // Login
+      window.login = async () => {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          showStatus("loginStatus", "Logged in!", "success");
+        } catch (err) {
+          showStatus("loginStatus", err.message, "error");
+        }
+      };
+
+      // Logout
+      window.logout = async () => {
+        await signOut(auth);
+      };
+
+      // Write data
+      window.writeData = async () => {
+        const key = document.getElementById("writeKey").value.trim();
+        const value = document.getElementById("writeValue").value.trim();
+
+        try {
+          const res = await fetch(`${BACKEND}/api/data/write`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify({ key, value }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          showStatus("writeStatus", `Written to: ${data.path}`, "success");
+        } catch (err) {
+          showStatus("writeStatus", err.message, "error");
+        }
+      };
+
+      // Read data
+      window.readData = async () => {
+        try {
+          const res = await fetch(`${BACKEND}/api/data/read`, {
+            headers: { Authorization: `Bearer ${idToken}` },
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          showStatus("readStatus", "Data fetched successfully", "success");
+          const output = document.getElementById("readOutput");
+          output.textContent = JSON.stringify(data.data, null, 2);
+          output.classList.remove("hidden");
+        } catch (err) {
+          showStatus("readStatus", err.message, "error");
+        }
+      };
+
+      // Get profile
+      window.getProfile = async () => {
+        try {
+          const res = await fetch(`${BACKEND}/api/auth/profile`, {
+            headers: { Authorization: `Bearer ${idToken}` },
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          showStatus("profileStatus", "Profile fetched", "success");
+          const output = document.getElementById("profileOutput");
+          output.textContent = JSON.stringify(data, null, 2);
+          output.classList.remove("hidden");
+        } catch (err) {
+          showStatus("profileStatus", err.message, "error");
+        }
+      };
+    </script>
+  </body>
+</html>

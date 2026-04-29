@@ -1,0 +1,48 @@
+https://console.firebase.google.com/u/0/project/atuune-demo/database/atuune-demo-default-rtdb/data/~2F
+
+
+https://console.firebase.google.com/u/0/project/atuune-demo/database/atuune-demo-default-rtdb/data/~2F
+
+Realtime Database link: https://atuune-demo-default-rtdb.firebaseio.com/
+
+
+
+Firebase Admin SDK
+Your Firebase service account can be used to authenticate multiple Firebase features, such as Database, Storage and Auth, programmatically via the unified Admin SDK. Learn more
+
+Firebase service account
+firebase-adminsdk-fbsvc@atuune-demo.iam.gserviceaccount.com
+
+////////////////////
+
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("path/to/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://atuune-demo-default-rtdb.firebaseio.com"
+});
+
+//////////////////////////////////////////////////
+
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBud-uj42WsJXeq4YlgX_wybEgRZCA5tI8",
+  authDomain: "atuune-demo.firebaseapp.com",
+  databaseURL: "https://atuune-demo-default-rtdb.firebaseio.com",
+  projectId: "atuune-demo",
+  storageBucket: "atuune-demo.firebasestorage.app",
+  messagingSenderId: "723584441780",
+  appId: "1:723584441780:web:544c85509785e59ac7a6e1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
