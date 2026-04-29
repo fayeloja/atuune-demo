@@ -1,0 +1,57 @@
+# Node dependencies
+node_modules/
+
+# Build outputs
+/dist
+/build
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Dependency directories in frontend if added later
+frontend/node_modules/
+
+# Lock files if not committed in the repo root
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Optional local editor files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+
+# Firebase service account key and secrets
+backend/serviceAccountKey.json
+backend/*.key
+backend/*.pem
+*.json
+node_modules/
+.env
+serviceAccountKey.json
+backend/samples/
+backend/samples/atuune-demo-firebase-adminsdk-fbsvc-da64d359aa.json
+
+
+# Sample folder
+samples/
