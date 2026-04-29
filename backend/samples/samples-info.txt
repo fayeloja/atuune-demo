@@ -1,6 +1,0 @@
-https://console.firebase.google.com/u/0/project/atuune-demo/database/atuune-demo-default-rtdb/data/~2F
-
-
-https://console.firebase.google.com/u/0/project/atuune-demo/database/atuune-demo-default-rtdb/data/~2F
-
-Realtime Database link: https://atuune-demo-default-rtdb.firebaseio.com/
